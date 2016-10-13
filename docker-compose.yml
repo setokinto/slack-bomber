@@ -1,0 +1,11 @@
+
+version: '2'
+
+services:
+    bomber:
+        build: ./
+        volumes:
+            - ./:/app
+        env_file:
+            - ./bomber.env
+
