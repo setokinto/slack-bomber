@@ -9,10 +9,10 @@ _fetchers = {}
 
 class EmojiFetcher:
 
-    def __init__(self, target_text_id, handler):
-        self.target_text_id = target_text_id
+    def __init__(self, target_channel_id, handler):
+        self.target_channel_id = target_channel_id
         self.handler = handler
-        _fetchers[target_text_id] = self
+        _fetchers[target_channel_id] = self
 
 
 def fire_emoji_fetcher(user, reaction, channel, fetchers = None):
