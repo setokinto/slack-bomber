@@ -1,7 +1,7 @@
 
 import unittest
 
-from app.rtm.emoji_fetcher import EmojiFetcher, fire_emoji_fetcher, get_content_from_message
+from app.rtm.emoji_fetcher import EmojiFetcher, fire_emoji_fetcher, get_content_from_message, connect
 
 
 called_flag = False
@@ -19,6 +19,8 @@ class TestTest(unittest.TestCase):
     def setUp(self):
         self.fetcher1 = EmojiFetcher("channel1", fetcher1_handler)
         self.fetcher2 = EmojiFetcher("channel2", fetcher2_handler)
+        global connect
+        connect = lambda: None
 
     def test_get_content_from_message_should_return_reaction_when_received_reaction_removed(self):
         content = get_content_from_message({"type":"reaction_removed","user":"U03B2FKN7","item":{"type":"message","channel":"C2NPVNFGX","ts":"1476371851.000617"},"reaction":"test","event_ts":"1476372995.594852"})

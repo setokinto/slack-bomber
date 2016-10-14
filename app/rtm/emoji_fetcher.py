@@ -1,4 +1,6 @@
 
+import json
+
 from slacker import Slacker
 from websocket import WebSocketApp
 from slackbot_settings import API_TOKEN
@@ -34,7 +36,8 @@ def get_content_from_message(message):
     return None
 
 def on_message(ws, message):
-    content = get_content_from_message()
+    message = json.loads(message)
+    content = get_content_from_message(message)
     if content is not None:
         fire_emoji_fetcher(content["user"], content["reaction"], content["channel"])
 
@@ -47,8 +50,12 @@ def on_close(ws):
 def on_open(ws):
     print("### opened ###")
 
-
+connected = False
 def connect():
+    global connected
+    if connected:
+        return
+    connected = True
     slacker = Slacker(API_TOKEN)
     url = slacker.rtm.start().body["url"]
     ws = WebSocketApp(url,
