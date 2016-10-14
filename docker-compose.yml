@@ -8,4 +8,6 @@ services:
             - ./:/app
         env_file:
             - ./bomber.env
+        environment:
+            - PYTHONUNBUFFERED=0
 
