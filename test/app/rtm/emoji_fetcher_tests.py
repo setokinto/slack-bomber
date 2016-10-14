@@ -1,7 +1,7 @@
 
 import unittest
 
-from app.rtm.emoji_fetcher import EmojiFetcher, fire_emoji_fetcher, get_content_from_message, connect
+from app.rtm.emoji_fetcher import EmojiFetcher, fire_emoji_fetcher, get_content_from_message, connect, on_message
 
 
 called_flag = False
@@ -75,4 +75,17 @@ class TestTest(unittest.TestCase):
         fetcher1_called = fetcher
 
         fire_emoji_fetcher("user1", "reaction1", "non_registerd_channel")
+
+    def test_fetcher_is_work(self):
+        global called_flag
+        called_flag = False
+        def handler(user, emoji, channel):
+            global called_flag
+            called_flag = True
+            self.assertEqual(user, "U03B2FKN7")
+
+        fetcher = EmojiFetcher("test_fetcher_is_work", handler)
+        on_message(None, """{"type":"reaction_removed","user":"U03B2FKN7","item":{"type":"message","channel":"test_fetcher_is_work","ts":"1476371851.000617"},"reaction":"test","event_ts":"1476372995.594852"}""")
+        self.assertTrue(called_flag)
+
 
