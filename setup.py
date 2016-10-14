@@ -8,6 +8,8 @@ setup(
     test_suite="test",
     install_requires=[
         "slackbot",
+        "slacker",
+        "websocket-client",
     ],
 )
 
