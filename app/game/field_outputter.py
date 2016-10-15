@@ -12,5 +12,6 @@ class FieldOutputter:
             cls.recent_field_ts[channel] = res.body["ts"]
         else:
             ts = cls.recent_field_ts[channel]
-            slacker.chat.update(channel, ts, field_text+"(edited)") # TODO: remove this string
+            import random
+            slacker.chat.update(channel, ts, field_text+"(edited)"+str(random.random())) # TODO: remove this string
 
