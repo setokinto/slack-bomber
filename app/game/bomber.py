@@ -25,6 +25,7 @@ class Bomber:
     def __init__(self, channel, users):
         self.channel = channel
         self.users = users
+        self.field = []
         self.fetcher = Input(channel, self.reaction_handler)
 
     def reaction_handler(self, user, command):

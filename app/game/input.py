@@ -28,9 +28,9 @@ class Input:
     def __init__(self, channel, handler):
         self.channel = channel
         self._handler = handler
-        self._fetcher = EmojiFetcher(channel, self._reaction_handler)
+        self._fetcher = EmojiFetcher(channel, self._fetcher_handler)
 
-    def _reaction_handler(self, user, reaction, channel):
+    def _fetcher_handler(self, user, reaction, channel):
         command = Command.reaction_to_command(reaction)
         if command is not None:
             self._handler(user, command)

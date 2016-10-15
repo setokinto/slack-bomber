@@ -15,7 +15,7 @@ class InputTest(unittest.TestCase):
             self.called = True
 
         input_ = Input("channel", handler)
-        up = input_._reaction_handler("user", "arrow_up", "channel")
+        up = input_._fetcher_handler("user", "arrow_up", "channel")
         self.assertTrue(self.called)
 
     def test_input_should_return_down(self):
@@ -26,7 +26,7 @@ class InputTest(unittest.TestCase):
             self.called = True
 
         input_ = Input("channel", handler)
-        up = input_._reaction_handler("user", "arrow_down", "channel")
+        up = input_._fetcher_handler("user", "arrow_down", "channel")
         self.assertTrue(self.called)
 
     def test_input_should_return_left(self):
@@ -37,7 +37,7 @@ class InputTest(unittest.TestCase):
             self.called = True
 
         input_ = Input("channel", handler)
-        up = input_._reaction_handler("user", "arrow_left", "channel")
+        up = input_._fetcher_handler("user", "arrow_left", "channel")
         self.assertTrue(self.called)
 
 
@@ -49,7 +49,7 @@ class InputTest(unittest.TestCase):
             self.called = True
 
         input_ = Input("channel", handler)
-        up = input_._reaction_handler("user", "arrow_right", "channel")
+        up = input_._fetcher_handler("user", "arrow_right", "channel")
         self.assertTrue(self.called)
 
     def test_input_should_return_a(self):
@@ -60,7 +60,7 @@ class InputTest(unittest.TestCase):
             self.called = True
 
         input_ = Input("channel", handler)
-        up = input_._reaction_handler("user", "a", "channel")
+        up = input_._fetcher_handler("user", "a", "channel")
         self.assertTrue(self.called)
 
     def test_input_should_not_return_the_other_reactions(self):
@@ -69,6 +69,6 @@ class InputTest(unittest.TestCase):
             self.called = True
 
         input_ = Input("channel", handler)
-        up = input_._reaction_handler("user", "the_other_reaction", "channel")
+        up = input_._fetcher_handler("user", "the_other_reaction", "channel")
         self.assertFalse(self.called)
 
