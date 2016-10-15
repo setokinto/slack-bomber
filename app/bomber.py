@@ -7,11 +7,11 @@ from app.game.bomber import BomberFactory
 
 @respond_to("start with (.*)")
 def start(message, who):
-    connect()
+    message.reply("Yeah! Start bomber!!")
 
+    connect()
     BomberFactory.create(message.body["channel"], [
       "user1"
     ])
 
-    message.reply("Yeah! Start bomber!!")
 

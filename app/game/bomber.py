@@ -1,5 +1,6 @@
 
 from app.game.input import Input
+from app.slack import slacker
 
 class BomberFactory:
     _bomber_store = {}
@@ -27,5 +28,5 @@ class Bomber:
         self.fetcher = Input(channel, self.reaction_handler)
 
     def reaction_handler(self, user, command):
-        print(command)
+        slacker.chat.post_message(self.channel, user +": " + str(command))
 
