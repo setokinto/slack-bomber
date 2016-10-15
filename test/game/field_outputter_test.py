@@ -16,6 +16,7 @@ class FieldOutputterTest(unittest.TestCase):
         mock.body = {"ts": "tsvalue"}
         mocked_slacker.chat.post_message.return_value = mock
         mocked_slacker.chat.update.return_value = None
+        mocked_slacker.reactions.add.return_value = None
         FieldOutputter.post_field("channel", None)
         self.assertTrue(mocked_slacker.chat.post_message.called)
         self.assertFalse(mocked_slacker.chat.update.called)
@@ -27,6 +28,7 @@ class FieldOutputterTest(unittest.TestCase):
         mock.body = {"ts": "tsvalue"}
         mocked_slacker.chat.post_message.return_value = mock
         mocked_slacker.chat.update.return_value = None
+        mocked_slacker.reactions.add.return_value = None
         FieldOutputter.post_field("channel", None)
         self.assertTrue(mocked_slacker.chat.post_message.called)
         self.assertFalse(mocked_slacker.chat.update.called)
@@ -40,6 +42,7 @@ class FieldOutputterTest(unittest.TestCase):
         mock.body = {"ts": "tsvalue"}
         mocked_slacker.chat.post_message.return_value = mock
         mocked_slacker.chat.update.return_value = None
+        mocked_slacker.reactions.add.return_value = None
         FieldOutputter.post_field("channel", None)
         self.assertTrue(mocked_slacker.chat.post_message.called)
         self.assertFalse(mocked_slacker.chat.update.called)
