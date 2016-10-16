@@ -1,7 +1,6 @@
 
 from slackbot.bot import respond_to
 
-from app.rtm.emoji_fetcher import connect
 from app.game.bomber import BomberFactory
 
 
@@ -9,10 +8,9 @@ from app.game.bomber import BomberFactory
 def start(message, who):
     message.reply("Yeah! Start bomber!!")
     BomberFactory.create(message.body["channel"], [
-      "user1"
+      "user1",
+      "user2",
     ])
-
-    connect() # FIXME: this connect may be block a thread
 
 @respond_to("stop|quit|finish|end|bye")
 def end(message):

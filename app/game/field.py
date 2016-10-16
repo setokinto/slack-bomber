@@ -36,7 +36,7 @@ class Person:
 
     def __init__(self, user, point=Point(0, 0)):
         self.user = user
-        self.position = point
+        self.point = point
         self.bomb_count = 1
         self.speed_count = 1
         self.fire_count = 1
