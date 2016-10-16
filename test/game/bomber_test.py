@@ -1,12 +1,20 @@
 
 import unittest
+from unittest.mock import patch
 
 from app.game.bomber import BomberFactory, Bomber
 
-class InputTest(unittest.TestCase):
+class BomberTest(unittest.TestCase):
 
     def setUp(self):
-        pass
+        self.patcher = patch("app.game.bomber.slacker")
+        self.patcher.start()
+        self.patcher2 = patch("app.game.bomber.Bomber.start")
+        self.patcher2.start()
+
+    def tearDown(self):
+        self.patcher.stop()
+        self.patcher2.stop()
 
     def test_BomberFactory_should_create_bomber_instance(self):
         bomber = BomberFactory.create("channel", [])
