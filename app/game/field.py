@@ -28,9 +28,35 @@ class Point:
 
 class Bomb:
 
-    def __init__(self, owner, fire):
+    def __init__(self, owner, fire_count):
         self.owner = owner
-        self.fire = fire
+        self.fire_count = fire_count
+        self.remain_time = 5
+
+    def fire(self):
+        fire_points = []
+        for i in range(1, self.fire_count+1):
+            fire_points += [
+                Point(-i, 0),
+                Point(i, 0),
+                Point(0, -i),
+                Point(0, i),
+            ]
+        return fire_points + [Point(0, 0)]
+
+    def proceed_time(self, proceeded_time):
+        self.remain_time -= proceeded_time
+
+    def __repr__(self):
+        return "Bomb({}, {})".format(self.owner, self.fire_count)
+
+class Fire:
+
+    def __eq__(self, other):
+        return isinstance(other, Fire)
+
+    def __repr__(self):
+        return "Fire()"
 
 class Person:
 
@@ -63,6 +89,31 @@ class Field:
         self.persons = [ Person(user, initial_pos)
               for user, initial_pos in zip(users, map_["person_initial_positions"])
             ]
+
+    def proceed_time(self, proceeded_time):
+        for x in range(len(self.bombs)):
+            for y in range(len(self.bombs[x])):
+                bomb = self.bombs[x][y]
+                if not isinstance(bomb, Bomb):
+                   continue
+                bomb.proceed_time(proceeded_time)
+
+                if bomb.remain_time <= 0:
+                    self.fire_bomb(Point(x, y))
+
+
+    def fire_bomb(self, point):
+        bomb = field_object(self.bombs, point)
+        put_object_to_field(self.bombs, point, Fire())
+
+        fire_points = bomb.fire()
+        for fire in fire_points:
+            fire_pos = fire.diff(point.x, point.y)
+            object_at_fire = field_object(self.bombs, fire_pos)
+            if isinstance(object_at_fire, Bomb):
+                self.fire_bomb(fire_pos)
+            put_object_to_field(self.bombs, fire_pos, Fire())
+
 
     def person_by_user(self, user):
         for person in self.persons:
@@ -106,10 +157,24 @@ class Field:
         return True
 
 def put_object_to_field(source, point, obj):
+    if is_out_of_source(source, point):
+           return None
     source[point.x][point.y] = obj
 
 def field_object(source, point):
+    if is_out_of_source(source, point):
+        return None
+
     return source[point.x][point.y]
+
+def is_out_of_source(source, point):
+    if point.x < 0 or len(source) <= point.x or \
+       point.y < 0 or len(source[point.x]) <= point.y:
+        return True
+    else:
+        return False
+
+
 
 class FieldCreater:
 
