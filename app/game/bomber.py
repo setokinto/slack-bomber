@@ -37,14 +37,20 @@ class Bomber:
         self.users = users
         self.field = Field(8, 10, users)
         self.fetcher = Input(channel, self.reaction_handler)
+        self.prev_tick = None
 
     def start(self):
         self.running = True
+        self.prev_tick = time.time()
         while self.running:
             self.tick()
             time.sleep(1)
 
     def tick(self):
+        tick_time = time.time()
+        sec = tick_time - self.prev_tick
+        self.field.proceed_time(sec)
+        self.prev_tick = tick_time
         FieldOutputter.post_field(self.channel, self.field)
 
     def reaction_handler(self, user, command):
