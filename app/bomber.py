@@ -22,4 +22,3 @@ def start(message, who):
 def end(message):
     BomberFactory.remove(message.body["channel"])
     message.reply("finished")
-

@@ -1,15 +1,18 @@
 
 from enum import Enum
 
+
 class Object(Enum):
     wall = 0
     empty = 1
     block = 2
 
+
 class Item(Enum):
     speed = 0
     add_bomb = 1
     fire = 2
+
 
 class Point:
 
@@ -25,7 +28,6 @@ class Point:
 
     def __repr__(self):
         return "Point({}, {})".format(self.x, self.y)
-
 
 class ProceedObject:
 
@@ -44,7 +46,7 @@ class Bomb(ProceedObject):
 
     def fire(self):
         fire_points = []
-        for i in range(1, self.fire_count+1):
+        for i in range(1, self.fire_count + 1):
             fire_points += [
                 Point(-i, 0),
                 Point(i, 0),
@@ -65,6 +67,7 @@ class Fire(ProceedObject):
         self.remain_time = 2
 
     def __eq__(self, other):
+
         return isinstance(other, Fire)
 
     def __repr__(self):
@@ -83,9 +86,10 @@ class FiredPerson:
 
 class Person:
 
-    def __init__(self, user, point=Point(0, 0)):
+    def __init__(self, user, point=Point(0, 0), num=0):
         self.user = user
         self.point = point
+        self.num = num
         self.bomb_count = 1
         self.speed_count = 1
         self.fire_count = 1
@@ -111,20 +115,22 @@ class Person:
         self.fire_count += count
 
 class Field:
+
     """
         Access each field like _fields[x][y]
         left-top is _fields[0][0]
     """
+
     def __init__(self, x_size, y_size, users):
         self.x_size = x_size
         self.y_size = y_size
-        self.bombs = [ [None]*y_size for x in range(x_size)]
+        self.bombs = [[None] * y_size for x in range(x_size)]
         map_ = FieldCreater.generate_map(x_size, y_size, len(users))
         self.objects = map_["objects"]
         self.items = map_["items"]
-        self.persons = [ Person(user, initial_pos)
-              for user, initial_pos in zip(users, map_["person_initial_positions"])
-            ]
+        self.persons = [Person(user, initial_pos, num)
+                        for user, initial_pos, num in zip(users, map_["person_initial_positions"], range(0, len(users)))
+                        ]
 
     def proceed_time(self, proceeded_time):
         for x in range(len(self.bombs)):
@@ -140,6 +146,7 @@ class Field:
             if bomb.remain_time <= 0:
                 if isinstance(bomb, Bomb):
                     self.fire_bomb(point)
+
                 if isinstance(bomb, Fire):
                     put_object_to_field(self.bombs, point, None)
 
@@ -216,16 +223,35 @@ class Field:
             return False
         return True
 
+    def get_field_object(self, point=None, x=None, y=None):
+        x_point = point.x if point is not None else x
+        y_point = point.y if point is not None else y
+
+        if self.bombs[x_point][y_point] is not None:
+            return self.bombs[x_point][y_point]
+
+        if self.items[x_point][y_point] is not None:
+            return self.bombs[x_point][y_point]
+
+        for person in self.persons:
+            if person.point.x is x_point and person.point.y is y_point:
+                return person
+
+        return self.objects[x_point][y_point]
+
+
 def put_object_to_field(source, point, obj):
     if is_out_of_source(source, point):
-           return None
+        return None
     source[point.x][point.y] = obj
+
 
 def field_object(source, point):
     if is_out_of_source(source, point):
         return None
 
     return source[point.x][point.y]
+
 
 def is_out_of_source(source, point):
     if point.x < 0 or len(source) <= point.x or \
@@ -235,18 +261,22 @@ def is_out_of_source(source, point):
         return False
 
 
-
 class FieldCreater:
 
     @staticmethod
     def generate_map(x_size, y_size, person_num):
-        # TODO: create a real map
+
+        field_wall = [Object.wall] * y_size
+        field_wall_and_emp = [Object.wall] + \
+            [Object.empty] * (y_size - 2) + [Object.wall]
+
         return {
-            "objects":  [ [Object.empty]*y_size for x in range(x_size)],
-            "items": [ [None]*y_size for x in range(x_size)],
+            "objects":  [field_wall] + [field_wall_and_emp] * (x_size - 2) + [field_wall],
+            "items": [[None] * y_size for x in range(x_size)],
             "person_initial_positions": [
-                Point(0, 0),
-                Point(x_size-1, y_size-1),
+                Point(5, 5),
+                Point(x_size - 2, y_size - 2),
+                Point(1, y_size - 2),
+                Point(x_size - 2, 1)
             ],
         }
-
