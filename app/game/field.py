@@ -70,6 +70,17 @@ class Fire(ProceedObject):
     def __repr__(self):
         return "Fire()"
 
+class FiredPerson:
+
+    def __init__(self, person):
+        self.person = person
+
+    def __eq__(self, other):
+        return isinstance(other, FiredPerson)
+
+    def __repr__(self):
+        return "FiredPerson()"
+
 class Person:
 
     def __init__(self, user, point=Point(0, 0)):
@@ -79,6 +90,7 @@ class Person:
         self.speed_count = 1
         self.fire_count = 1
         self._used_bomb = 0
+        self.dead = False
 
     def get_bomb(self):
         if self._used_bomb >= self.bomb_count:
@@ -132,7 +144,10 @@ class Field:
             if isinstance(object_at_fire, Bomb):
                 self.fire_bomb(fire_pos)
             put_object_to_field(self.bombs, fire_pos, Fire())
-
+            for person in self.persons:
+                if person.point == fire_pos:
+                    person.dead = True
+                    put_object_to_field(self.bombs, fire_pos, FiredPerson(person))
 
 
     def person_by_user(self, user):

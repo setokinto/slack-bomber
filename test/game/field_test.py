@@ -1,7 +1,7 @@
 
 import unittest
 
-from app.game.field import Field, Point, Bomb, Fire
+from app.game.field import Field, Point, Bomb, Fire, FiredPerson
 
 class FieldTest(unittest.TestCase):
 
@@ -51,6 +51,7 @@ class FieldTest(unittest.TestCase):
 
     def test_Field_should_proceed_time(self):
         field = Field(8, 10, ["user1", "user2"])
+        field.persons[0].point = Point(7, 9)
         bom1 = Bomb("user1", 1)
         field.bombs[0][0] = bom1
         field.proceed_time(3)
@@ -84,6 +85,7 @@ class FieldTest(unittest.TestCase):
         bom4 = Bomb("user1", 4)
         bom5 = Bomb("user1", 5)
         fire = Fire()
+        fired_person = FiredPerson(field.persons[0])
         field.bombs = [
             [None, None, None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None, None, None],
@@ -108,12 +110,14 @@ class FieldTest(unittest.TestCase):
             [fire, fire, fire, fire, fire, fire, fire, None, None, None],
         ])
 
+        field.persons[0].point = Point(3, 9)
+
         field.fire_bomb(Point(3, 1)) # bom3
         self.assertAllField(field.bombs, [
             [None, fire, None, None, fire, None, None, None, None, None],
             [None, fire, None, None, fire, None, None, fire, None, None],
             [None, fire, None, None, fire, None, None, fire, None, None],
-            [fire, fire, fire, fire, fire, fire, fire, fire, fire, fire],
+            [fire, fire, fire, fire, fire, fire, fire, fire, fire, fired_person],
             [None, fire, fire, None, fire, None, None, fire, None, None],
             [None, fire, fire, None, fire, None, fire, fire, fire, None],
             [None, fire, fire, None, fire, None, None, fire, None, None],
