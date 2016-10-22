@@ -26,7 +26,16 @@ class Point:
     def __repr__(self):
         return "Point({}, {})".format(self.x, self.y)
 
-class Bomb:
+
+class ProceedObject:
+
+    def __init__(self):
+        self.remain_time = 0
+
+    def proceed_time(self, proceeded_time):
+        self.remain_time -= proceeded_time
+
+class Bomb(ProceedObject):
 
     def __init__(self, owner, fire_count):
         self.owner = owner
@@ -50,7 +59,10 @@ class Bomb:
     def __repr__(self):
         return "Bomb({}, {})".format(self.owner, self.fire_count)
 
-class Fire:
+class Fire(ProceedObject):
+
+    def __init__(self):
+        self.remain_time = 2
 
     def __eq__(self, other):
         return isinstance(other, Fire)
@@ -94,17 +106,24 @@ class Field:
         for x in range(len(self.bombs)):
             for y in range(len(self.bombs[x])):
                 bomb = self.bombs[x][y]
-                if not isinstance(bomb, Bomb):
-                   continue
-                bomb.proceed_time(proceeded_time)
+                point = Point(x, y)
+                self._proceed_time_each_bomb(bomb, point, proceeded_time)
+    
+    def _proceed_time_each_bomb(self, bomb, point, proceeded_time):
+        if isinstance(bomb, ProceedObject):
+            bomb.proceed_time(proceeded_time)
 
-                if bomb.remain_time <= 0:
-                    self.fire_bomb(Point(x, y))
-
+            if bomb.remain_time <= 0:
+                if isinstance(bomb, Bomb):
+                    self.fire_bomb(point)
+                if isinstance(bomb, Fire):
+                    put_object_to_field(self.bombs, point, None)
+                            
 
     def fire_bomb(self, point):
         bomb = field_object(self.bombs, point)
-        put_object_to_field(self.bombs, point, Fire())
+        # Remove bomb for infinite recursion
+        put_object_to_field(self.bombs, point, None)
 
         fire_points = bomb.fire()
         for fire in fire_points:
@@ -113,6 +132,7 @@ class Field:
             if isinstance(object_at_fire, Bomb):
                 self.fire_bomb(fire_pos)
             put_object_to_field(self.bombs, fire_pos, Fire())
+
 
 
     def person_by_user(self, user):

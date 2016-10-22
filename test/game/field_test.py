@@ -59,6 +59,8 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(field.bombs[0][0], bom1)
         field.proceed_time(1)
         self.assertEqual(field.bombs[0][0], Fire())
+        field.proceed_time(2)
+        self.assertEqual(field.bombs[0][0], None)
 
         bom2 = Bomb("user1", 2)
         field.bombs[5][5] = bom2
@@ -68,6 +70,10 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(field.bombs[5][5], bom2)
         field.proceed_time(4.3)
         self.assertEqual(field.bombs[5][5], Fire())
+        field.proceed_time(1.5)
+        self.assertEqual(field.bombs[5][5], Fire())
+        field.proceed_time(0.6)
+        self.assertEqual(field.bombs[5][5], None)
 
 
     def test_Field_should_fire_with_other_bomb(self):
