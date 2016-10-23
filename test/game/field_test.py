@@ -1,7 +1,7 @@
 
 import unittest
 
-from app.game.field import Field, Point, Bomb, Fire, FiredPerson
+from app.game.field import Field, Point, Bomb, Fire, FiredPerson, Object
 
 class FieldTest(unittest.TestCase):
 
@@ -111,6 +111,7 @@ class FieldTest(unittest.TestCase):
         ])
 
         field.persons[0].point = Point(3, 9)
+        field.objects[1][7] = Object.block
 
         field.fire_bomb(Point(3, 1)) # bom3
         self.assertAllField(field.bombs, [
@@ -123,6 +124,7 @@ class FieldTest(unittest.TestCase):
             [None, fire, fire, None, fire, None, None, fire, None, None],
             [fire, fire, fire, fire, fire, fire, fire, None, None, None],
         ])
+        self.assertIsNone(field.objects[1][7])
 
     def assertAllField(self, field_a, field_b, description=""):
         y = 0
