@@ -98,6 +98,15 @@ class Person:
         self._used_bomb += 1
         return Bomb(self, self.fire_count)
 
+    def add_bomb(self, count=1):
+        self.bomb_count += count
+
+    def add_speed(self, count=1):
+        self.speed_count += count
+
+    def add_fire(self, count=1):
+        self.fire_count += count
+
 class Field:
     """
         Access each field like _fields[x][y]
@@ -180,6 +189,14 @@ class Field:
         dest = person.point.diff(x, y)
         if self.check_obstacle(dest):
             person.point = dest
+            item = field_object(self.items, dest)
+            put_object_to_field(self.items, dest, None)
+            if item == Item.speed:
+                person.add_speed()
+            elif item == Item.add_bomb:
+                person.add_bomb()
+            elif item == Item.fire:
+                person.add_fire()
 
     def check_obstacle(self, point):
         if point.x < 0 or self.x_size <= point.x or \

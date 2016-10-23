@@ -1,7 +1,7 @@
 
 import unittest
 
-from app.game.field import Field, Point, Bomb, Fire, FiredPerson, Object
+from app.game.field import Field, Point, Bomb, Fire, FiredPerson, Object, Item
 
 class FieldTest(unittest.TestCase):
 
@@ -76,6 +76,57 @@ class FieldTest(unittest.TestCase):
         field.proceed_time(0.6)
         self.assertEqual(field.bombs[5][5], None)
 
+    def test_Field_items_should_get_by_person(self):
+        field = Field(8, 10, ["user1", "user2"])
+
+        fire = Item.fire
+        bomb = Item.add_bomb
+        sped = Item.speed
+        person = field.persons[0]
+
+        person.point = Point(0, 0)
+        field.items = [
+            [None, fire, bomb, sped, fire, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+        ]
+
+        self.assertEqual(person.fire_count, 1)
+        self.assertEqual(person.bomb_count, 1)
+        self.assertEqual(person.speed_count, 1)
+
+        field.move_bottom(person)
+        self.assertEqual(person.fire_count, 2)
+        self.assertEqual(person.bomb_count, 1)
+        self.assertEqual(person.speed_count, 1)
+
+        field.move_bottom(person)
+        self.assertEqual(person.fire_count, 2)
+        self.assertEqual(person.bomb_count, 2)
+        self.assertEqual(person.speed_count, 1)
+
+        field.move_bottom(person)
+        self.assertEqual(person.fire_count, 2)
+        self.assertEqual(person.bomb_count, 2)
+        self.assertEqual(person.speed_count, 2)
+
+        field.move_bottom(person)
+        self.assertEqual(person.fire_count, 3)
+        self.assertEqual(person.bomb_count, 2)
+        self.assertEqual(person.speed_count, 2)
+
+        field.move_top(person)
+        field.move_top(person)
+        field.move_top(person)
+        field.move_top(person)
+        self.assertEqual(person.fire_count, 3)
+        self.assertEqual(person.bomb_count, 2)
+        self.assertEqual(person.speed_count, 2)
 
     def test_Field_should_fire_with_other_bomb(self):
         field = Field(8, 10, ["user1", "user2"])
