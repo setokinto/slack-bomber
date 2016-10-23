@@ -36,7 +36,7 @@ class FieldTest(unittest.TestCase):
 
         field.fire_bomb(bomb_point)
         field.put_bomb(person1)
-        self.assertIsNotNone(field.bombs[0][0], "It should put a bomb")
+        self.assertIsNotNone(field.bombs[1][1], "It should put a bomb")
 
     def test_Field_should_create(self):
         field = Field(8, 10, ["user1", "user2"])
@@ -89,10 +89,10 @@ class FieldTest(unittest.TestCase):
         sped = Item.speed
         person = field.persons[0]
 
-        person.point = Point(0, 0)
+        person.point = Point(1, 1)
         field.items = [
-            [None, fire, bomb, sped, fire, None, None, None, None, None],
             [None, None, None, None, None, None, None, None, None, None],
+            [None, None, fire, bomb, sped, fire, None, None, None, None],
             [None, None, None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None, None, None],
@@ -100,6 +100,10 @@ class FieldTest(unittest.TestCase):
             [None, None, None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None, None, None],
         ]
+        field.objects[1][1] = Object.empty
+        field.objects[1][2] = Object.empty
+        field.objects[1][3] = Object.empty
+        field.objects[1][4] = Object.empty
 
         self.assertEqual(person.fire_count, 1)
         self.assertEqual(person.bomb_count, 1)
@@ -180,10 +184,8 @@ class FieldTest(unittest.TestCase):
             [None, fire, fire, None, fire, None, None, fire, None, None],
             [fire, fire, fire, fire, fire, fire, fire, None, None, None],
         ])
-<<<<<<< f971f1ee4815f75431a2dbd89b2c7fa92bd45717
+
         self.assertIsNone(field.objects[1][7])
-=======
->>>>>>> fix bugs
 
     def test_field_should_get_field_object(self):
         field = Field(8, 10, ["user1", "user2"])
