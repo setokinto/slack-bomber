@@ -1,11 +1,11 @@
 
 from app.slack import slacker
-from app.game.field import Object, Bomb, Fire, Item, Person
+from app.game.field import Object, Bomb, Fire, Item, Person, FiredPerson, Point
 
 object_emoji_map = {
     Object.wall: ":black_square_for_stop:",
     Object.empty: ":white_large_square:",
-    Object.block: ":new_moon_with_face:"
+    Object.block: ":package:"
 }
 
 item_emoji_map = {
@@ -32,11 +32,13 @@ def object_to_emoji(object):
     if isinstance(object, Item):
         return item_emoji_map[object]
 
+    if isinstance(object, FiredPerson):
+        return ":skull:"
+
     if isinstance(object, Person):
         return person_emoji_map[object.num]
 
     return object_emoji_map[object]
-
 
 class FieldOutputter:
     recent_field_ts = {}
@@ -45,10 +47,12 @@ class FieldOutputter:
     def post_field(cls, channel, field, new_message=False):
 
         field_text = ""
-        for y in range(0, field.y_size):
-            for x in range(0, field.x_size):
-                field_text += object_to_emoji(
-                    field.get_field_object(x=x, y=y))
+        point = Point(0, 0)
+        for y in range(field.y_size):
+            for x in range(field.x_size):
+                point.x = x
+                point.y = y
+                field_text += object_to_emoji(field.get_field_object(point))
             field_text += "\n"
 
         if new_message or channel not in cls.recent_field_ts:

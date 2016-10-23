@@ -37,7 +37,7 @@ class Bomber:
     def __init__(self, channel, users):
         self.channel = channel
         self.users = users
-        self.field = Field(8, 10, users)
+        self.field = Field(11, 15, users)
         self.fetcher = Input(channel, self.reaction_handler)
         self.prev_tick = None
 
