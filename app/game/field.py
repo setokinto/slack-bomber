@@ -92,6 +92,9 @@ class Person:
         self._used_bomb = 0
         self.dead = False
 
+    def fired_bomb(self):
+        self._used_bomb = min(self._used_bomb + 1, self.bomb_count)
+
     def get_bomb(self):
         if self._used_bomb >= self.bomb_count:
             return None
@@ -120,7 +123,7 @@ class Field:
                 bomb = self.bombs[x][y]
                 point = Point(x, y)
                 self._proceed_time_each_bomb(bomb, point, proceeded_time)
-    
+
     def _proceed_time_each_bomb(self, bomb, point, proceeded_time):
         if isinstance(bomb, ProceedObject):
             bomb.proceed_time(proceeded_time)
@@ -130,7 +133,6 @@ class Field:
                     self.fire_bomb(point)
                 if isinstance(bomb, Fire):
                     put_object_to_field(self.bombs, point, None)
-                            
 
     def fire_bomb(self, point):
         bomb = field_object(self.bombs, point)
@@ -138,6 +140,10 @@ class Field:
         put_object_to_field(self.bombs, point, None)
 
         fire_points = bomb.fire()
+        for person in self.persons:
+            if person.user == bomb.owner:
+                person.fired_bomb()
+
         for fire in fire_points:
             fire_pos = fire.diff(point.x, point.y)
             object_at_fire = field_object(self.bombs, fire_pos)

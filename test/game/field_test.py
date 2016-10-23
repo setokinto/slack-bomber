@@ -22,6 +22,7 @@ class FieldTest(unittest.TestCase):
         field.move_bottom(person1)
         self.assertEqual(person1.point, Point(0, 1))
         field.put_bomb(person1)
+        bomb_point = person1.point
         self.assertIsNotNone(field.bombs[0][1])
         field.move_top(person1)
         self.assertEqual(person1.point, Point(0, 0))
@@ -32,6 +33,10 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(person1.point, Point(1, 0))
         field.move_left(person1)
         self.assertEqual(person1.point, Point(0, 0))
+
+        field.fire_bomb(bomb_point)
+        field.put_bomb(person1)
+        self.assertIsNotNone(field.bombs[0][0], "It should put a bomb")
 
     def test_Field_should_create(self):
         field = Field(8, 10, ["user1", "user2"])
