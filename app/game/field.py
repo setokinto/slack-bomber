@@ -1,6 +1,7 @@
 
 from enum import Enum
 import random
+import copy
 
 class Object(Enum):
     wall = 0
@@ -268,7 +269,7 @@ class FieldCreater:
         # init field by wall and empty
         field_wall = [Object.wall] * y_size
         field_wall_and_emp = [Object.wall] + [Object.empty] * (y_size - 2) + [Object.wall]
-        objects = [field_wall] + [field_wall_and_emp] * (x_size - 2) + [field_wall]
+        objects = [field_wall] + [copy.copy(field_wall_and_emp) for x in range(x_size - 2)] + [field_wall]
 
         # init item by None
         items =  [[None] * y_size for x in range(x_size)]
@@ -277,12 +278,17 @@ class FieldCreater:
         # add wall at even-num point and add block(50%) and add item(25%)
         for x in range(x_size):
             for y in range(y_size):
-                if objects[x][y] is Object.empty and y % 2 == 0 and x % 2 == 0:
-                    objects[x][y] = Object.wall
+                if objects[x][y] is Object.empty:
+                    if y % 2 == 0:
+                        if x % 2 == 0:
+                            objects[x][y] = Object.wall
 
-                if objects[x][y] is Object.empty and random.randint(0, 1) ==  0 \
-                   and x > 3 and x < x_size - 3 \
-                   and y > 3 and y < y_size - 3:
+
+                if objects[x][y] is Object.empty and random.randint(0, 1) ==  0\
+                   and (y + x) > 4\
+                   and (x_size - x + y) > 4\
+                   and (y_size - y + x) > 4\
+                   and (x_size + y_size - x - y) > 4:
                     objects[x][y] = Object.block
                     items[x][y] = item_map[random.randint(0, 5)]
 

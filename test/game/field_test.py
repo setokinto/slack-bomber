@@ -180,7 +180,10 @@ class FieldTest(unittest.TestCase):
             [None, fire, fire, None, fire, None, None, fire, None, None],
             [fire, fire, fire, fire, fire, fire, fire, None, None, None],
         ])
+<<<<<<< f971f1ee4815f75431a2dbd89b2c7fa92bd45717
         self.assertIsNone(field.objects[1][7])
+=======
+>>>>>>> fix bugs
 
     def test_field_should_get_field_object(self):
         field = Field(8, 10, ["user1", "user2"])

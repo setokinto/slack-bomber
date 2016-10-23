@@ -15,10 +15,10 @@ item_emoji_map = {
 }
 
 person_emoji_map = {
-    0: ":alien:",
-    1: ":rage:",
-    2: ":innocent:",
-    3: ":smiling_imp:"
+    0: ":joy:",
+    1: ":sunglasses:",
+    2: ":wink:",
+    3: ":heart_eyes:"
 }
 
 
