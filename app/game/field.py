@@ -148,7 +148,9 @@ class Field:
                 if person.point == fire_pos:
                     person.dead = True
                     put_object_to_field(self.bombs, fire_pos, FiredPerson(person))
-
+            object = field_object(self.objects, fire_pos)
+            if object == Object.block:
+                put_object_to_field(self.objects, fire_pos, None)
 
     def person_by_user(self, user):
         for person in self.persons:
