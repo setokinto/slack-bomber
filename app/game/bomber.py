@@ -55,10 +55,9 @@ class Bomber:
 
     def reaction_handler(self, user, command):
         person = self.field.person_by_user(user)
-# `person` is not implemented. set person programmatically because user interaction for now
-        person = self.field.persons[0] # REMOVE THIS
         if person is None:
             return
+
         if command == Command.up:
             self.field.move_top(person)
         elif command == Command.right:
