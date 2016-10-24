@@ -127,7 +127,7 @@ class Field:
         self.objects = map_["objects"]
         self.items = map_["items"]
         self.persons = [Person(user, initial_pos, num)
-                        for user, initial_pos, num in zip(users, map_["person_initial_positions"], range(0, len(users)))]
+                        for user, initial_pos, num in zip(users, map_["person_initial_positions"], range(len(users)))]
 
     def proceed_time(self, proceeded_time):
         for x in range(len(self.bombs)):
@@ -221,23 +221,24 @@ class Field:
         return True
 
     def get_field_object(self, point):
-        if field_object(self.objects, point) is Object.wall:
-            return Object.wall
 
-        if field_object(self.objects, point) is Object.block:
-            return Object.block
+        obj = field_object(self.objects, point)
+        if obj is Object.wall or obj is Object.block:
+            return obj
 
-        if field_object(self.bombs, point) is not None:
-            return self.bombs[point.x][point.y]
+        bomb = field_object(self.bombs, point)
+        if bomb is not None:
+            return bomb
 
-        if field_object(self.items, point) is not None:
-            return self.items[point.x][point.y]
+        item = field_object(self.items, point)
+        if item is not None:
+            return item
 
         for person in self.persons:
             if person.point.x == point.x and person.point.y == point.y:
                return person
 
-        return field_object(self.objects, point)
+        return obj
 
 
 def put_object_to_field(source, point, obj):
@@ -302,7 +303,5 @@ class FieldCreater:
         return {
             "objects":  objects,
             "items": items,
-            "person_initial_positions": [
-                person_initial_positions[num] for num in range(person_num)
-            ],
+            "person_initial_positions": person_initial_positions[:person_num],
         }
