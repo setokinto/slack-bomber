@@ -1,5 +1,7 @@
 
 from enum import Enum
+import random
+import copy
 
 class Object(Enum):
     wall = 0
@@ -26,7 +28,6 @@ class Point:
     def __repr__(self):
         return "Point({}, {})".format(self.x, self.y)
 
-
 class ProceedObject:
 
     def __init__(self):
@@ -44,7 +45,7 @@ class Bomb(ProceedObject):
 
     def fire(self):
         fire_points = []
-        for i in range(1, self.fire_count+1):
+        for i in range(1, self.fire_count + 1):
             fire_points += [
                 Point(-i, 0),
                 Point(i, 0),
@@ -83,9 +84,10 @@ class FiredPerson:
 
 class Person:
 
-    def __init__(self, user, point=Point(0, 0)):
+    def __init__(self, user, point=Point(0, 0), num=0):
         self.user = user
         self.point = point
+        self.num = num
         self.bomb_count = 1
         self.speed_count = 1
         self.fire_count = 1
@@ -111,20 +113,21 @@ class Person:
         self.fire_count += count
 
 class Field:
+
     """
         Access each field like _fields[x][y]
         left-top is _fields[0][0]
     """
+
     def __init__(self, x_size, y_size, users):
         self.x_size = x_size
         self.y_size = y_size
-        self.bombs = [ [None]*y_size for x in range(x_size)]
+        self.bombs = [[None] * y_size for x in range(x_size)]
         map_ = FieldCreater.generate_map(x_size, y_size, len(users))
         self.objects = map_["objects"]
         self.items = map_["items"]
-        self.persons = [ Person(user, initial_pos)
-              for user, initial_pos in zip(users, map_["person_initial_positions"])
-            ]
+        self.persons = [Person(user, initial_pos, num)
+                        for user, initial_pos, num in zip(users, map_["person_initial_positions"], range(len(users)))]
 
     def proceed_time(self, proceeded_time):
         for x in range(len(self.bombs)):
@@ -140,6 +143,7 @@ class Field:
             if bomb.remain_time <= 0:
                 if isinstance(bomb, Bomb):
                     self.fire_bomb(point)
+
                 if isinstance(bomb, Fire):
                     put_object_to_field(self.bombs, point, None)
 
@@ -165,7 +169,7 @@ class Field:
                     put_object_to_field(self.bombs, fire_pos, FiredPerson(person))
             object = field_object(self.objects, fire_pos)
             if object == Object.block:
-                put_object_to_field(self.objects, fire_pos, None)
+                put_object_to_field(self.objects, fire_pos, Object.empty)
 
     def person_by_user(self, user):
         for person in self.persons:
@@ -216,16 +220,39 @@ class Field:
             return False
         return True
 
+    def get_field_object(self, point):
+
+        obj = field_object(self.objects, point)
+        if obj is Object.wall or obj is Object.block:
+            return obj
+
+        bomb = field_object(self.bombs, point)
+        if bomb is not None:
+            return bomb
+
+        item = field_object(self.items, point)
+        if item is not None:
+            return item
+
+        for person in self.persons:
+            if person.point.x == point.x and person.point.y == point.y:
+               return person
+
+        return obj
+
+
 def put_object_to_field(source, point, obj):
     if is_out_of_source(source, point):
-           return None
+        return None
     source[point.x][point.y] = obj
+
 
 def field_object(source, point):
     if is_out_of_source(source, point):
         return None
 
     return source[point.x][point.y]
+
 
 def is_out_of_source(source, point):
     if point.x < 0 or len(source) <= point.x or \
@@ -235,18 +262,46 @@ def is_out_of_source(source, point):
         return False
 
 
-
 class FieldCreater:
 
     @staticmethod
     def generate_map(x_size, y_size, person_num):
-        # TODO: create a real map
-        return {
-            "objects":  [ [Object.empty]*y_size for x in range(x_size)],
-            "items": [ [None]*y_size for x in range(x_size)],
-            "person_initial_positions": [
-                Point(0, 0),
-                Point(x_size-1, y_size-1),
-            ],
-        }
 
+        # init field by wall and empty
+        field_wall = [Object.wall] * y_size
+        field_wall_and_emp = [Object.wall] + [Object.empty] * (y_size - 2) + [Object.wall]
+        objects = [field_wall] + [copy.copy(field_wall_and_emp) for x in range(x_size - 2)] + [field_wall]
+
+        # init item by None
+        items =  [[None] * y_size for x in range(x_size)]
+        item_map = [None, None, None, Item.add_bomb, Item.fire, Item.speed]
+
+        # add wall at even-num point and add block(50%) and add item(25%)
+        for x in range(x_size):
+            for y in range(y_size):
+                if objects[x][y] is Object.empty:
+                    if y % 2 == 0:
+                        if x % 2 == 0:
+                            objects[x][y] = Object.wall
+
+                # avoid corner block
+                if objects[x][y] is Object.empty and random.randint(0, 4) < 3\
+                   and (y + x) > 3\
+                   and (x_size - x + y) > 4\
+                   and (y_size - y + x) > 4\
+                   and (x_size + y_size - x - y) > 5:
+                    objects[x][y] = Object.block
+                    items[x][y] = random.choice(item_map)
+
+        person_initial_positions = [
+            Point(1, 1),
+            Point(x_size - 2, y_size - 2),
+            Point(1, y_size - 2),
+            Point(x_size - 2, 1)
+        ]
+
+        return {
+            "objects":  objects,
+            "items": items,
+            "person_initial_positions": person_initial_positions[:person_num],
+        }

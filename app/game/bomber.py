@@ -6,6 +6,7 @@ from app.game.field import Field
 from app.game.field_outputter import FieldOutputter
 from app.slack import slacker
 
+
 class BomberFactory:
     _bomber_store = {}
 
@@ -30,28 +31,30 @@ class BomberFactory:
             return cls._bomber_store[channel]
         return None
 
+
 class Bomber:
 
     def __init__(self, channel, users):
         self.channel = channel
         self.users = users
-        self.field = Field(8, 10, users)
+        self.field = Field(11, 15, users)
         self.fetcher = Input(channel, self.reaction_handler)
         self.prev_tick = None
 
     def start(self):
         self.running = True
+        FieldOutputter.post_field(self.channel, self.field)
         self.prev_tick = time.time()
         while self.running:
             self.tick()
-            time.sleep(1)
+            time.sleep(0.5)
 
     def tick(self):
         tick_time = time.time()
         sec = tick_time - self.prev_tick
         self.field.proceed_time(sec)
-        self.prev_tick = tick_time
         FieldOutputter.post_field(self.channel, self.field)
+        self.prev_tick = tick_time
 
     def reaction_handler(self, user, command):
         person = self.field.person_by_user(user)
@@ -68,4 +71,3 @@ class Bomber:
             self.field.move_left(person)
         elif command == Command.a:
             self.field.put_bomb(person)
-

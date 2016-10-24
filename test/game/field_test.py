@@ -9,34 +9,34 @@ class FieldTest(unittest.TestCase):
         pass
 
     def test_person_should_move_in_Field(self):
-        field = Field(8, 10, ["user1", "user2"])
+        field = Field(11, 11, ["user1", "user2"])
         person1 = field.person_by_user("user1")
         self.assertIsNotNone(person1)
-        person1.point = Point(0, 0)
+        person1.point = Point(1, 1)
         person2 = field.person_by_user("user2")
         self.assertIsNotNone(person2)
-        person2.point = Point(7, 9)
+        person2.point = Point(6, 8)
 
         field.move_top(person1)
-        self.assertEqual(person1.point, Point(0, 0))
+        self.assertEqual(person1.point, Point(1, 1))
         field.move_bottom(person1)
-        self.assertEqual(person1.point, Point(0, 1))
+        self.assertEqual(person1.point, Point(1, 2))
         field.put_bomb(person1)
         bomb_point = person1.point
-        self.assertIsNotNone(field.bombs[0][1])
+        self.assertIsNotNone(field.bombs[1][2])
         field.move_top(person1)
-        self.assertEqual(person1.point, Point(0, 0))
+        self.assertEqual(person1.point, Point(1, 1))
         field.put_bomb(person1)
-        self.assertIsNone(field.bombs[0][0], "It should not put a bomb because a bomb is not remained")
+        self.assertIsNone(field.bombs[1][1], "It should not put a bomb because a bomb is not remained")
 
         field.move_right(person1)
-        self.assertEqual(person1.point, Point(1, 0))
+        self.assertEqual(person1.point, Point(2, 1))
         field.move_left(person1)
-        self.assertEqual(person1.point, Point(0, 0))
+        self.assertEqual(person1.point, Point(1, 1))
 
         field.fire_bomb(bomb_point)
         field.put_bomb(person1)
-        self.assertIsNotNone(field.bombs[0][0], "It should put a bomb")
+        self.assertIsNotNone(field.bombs[1][1], "It should put a bomb")
 
     def test_Field_should_create(self):
         field = Field(8, 10, ["user1", "user2"])
@@ -89,10 +89,10 @@ class FieldTest(unittest.TestCase):
         sped = Item.speed
         person = field.persons[0]
 
-        person.point = Point(0, 0)
+        person.point = Point(1, 1)
         field.items = [
-            [None, fire, bomb, sped, fire, None, None, None, None, None],
             [None, None, None, None, None, None, None, None, None, None],
+            [None, None, fire, bomb, sped, fire, None, None, None, None],
             [None, None, None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None, None, None],
@@ -100,6 +100,11 @@ class FieldTest(unittest.TestCase):
             [None, None, None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None, None, None],
         ]
+        field.objects[1][1] = Object.empty
+        field.objects[1][2] = Object.empty
+        field.objects[1][3] = Object.empty
+        field.objects[1][4] = Object.empty
+        field.objects[1][5] = Object.empty
 
         self.assertEqual(person.fire_count, 1)
         self.assertEqual(person.bomb_count, 1)
@@ -180,7 +185,63 @@ class FieldTest(unittest.TestCase):
             [None, fire, fire, None, fire, None, None, fire, None, None],
             [fire, fire, fire, fire, fire, fire, fire, None, None, None],
         ])
-        self.assertIsNone(field.objects[1][7])
+
+        self.assertEqual(field.objects[1][7], Object.empty)
+
+    def test_field_should_get_field_object(self):
+        field = Field(8, 10, ["user1", "user2"])
+
+        wall = Object.wall
+        block = Object.block
+        emp = Object.empty
+        bomb = Bomb("user1", 1)
+        item = Item.speed
+
+        field.objects = [
+            [wall, block, emp, emp, emp, emp, emp, emp, emp, emp],
+            [None, emp, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+        ]
+
+        field.bombs = [
+            [bomb, bomb, bomb, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+        ]
+
+        field.items = [
+            [item, item, item, item, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+        ]
+
+        point = Point(0,0)
+        self.assertEqual(Field.get_field_object(field, point), wall)
+        point = Point(0,1)
+        self.assertEqual(Field.get_field_object(field, point), block)
+        point = Point(0,2)
+        self.assertEqual(Field.get_field_object(field, point), bomb)
+        point = Point(0,3)
+        self.assertEqual(Field.get_field_object(field, point), item)
+        point = Point(1,1)
+        self.assertEqual(Field.get_field_object(field, point), field.person_by_user("user1"))
+        point = Point(0,4)
+        self.assertEqual(Field.get_field_object(field, point), emp)
 
     def assertAllField(self, field_a, field_b, description=""):
         y = 0
@@ -190,4 +251,3 @@ class FieldTest(unittest.TestCase):
                 self.assertEqual(a, b, "at Point({}, {}) {}".format(x, y, description))
                 x += 1
             y += 1
-
