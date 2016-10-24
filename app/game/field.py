@@ -95,13 +95,14 @@ class Person:
         self.dead = False
 
     def fired_bomb(self):
-        self._used_bomb = min(self._used_bomb + 1, self.bomb_count)
+        if self._used_bomb > 0:
+            self._used_bomb -= 1
 
     def get_bomb(self):
         if self._used_bomb >= self.bomb_count:
             return None
         self._used_bomb += 1
-        return Bomb(self, self.fire_count)
+        return Bomb(self.user, self.fire_count)
 
     def add_bomb(self, count=1):
         self.bomb_count += count
