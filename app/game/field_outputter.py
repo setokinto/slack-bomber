@@ -61,10 +61,7 @@ class FieldOutputter:
             cls.add_controller(channel, res.body["ts"])
         else:
             ts = cls.recent_field_ts[channel]
-            import random
-            # TODO: remove this string
-            slacker.chat.update(
-                channel, ts, field_text + "(edited)" + str(random.random()))
+            slacker.chat.update(channel, ts, field_text)
 
     @classmethod
     def add_controller(cls, channel, ts):

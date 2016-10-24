@@ -169,7 +169,7 @@ class Field:
                     put_object_to_field(self.bombs, fire_pos, FiredPerson(person))
             object = field_object(self.objects, fire_pos)
             if object == Object.block:
-                put_object_to_field(self.objects, fire_pos, None)
+                put_object_to_field(self.objects, fire_pos, Object.empty)
 
     def person_by_user(self, user):
         for person in self.persons:
@@ -234,7 +234,7 @@ class Field:
             return self.items[point.x][point.y]
 
         for person in self.persons:
-            if person.point.x is point.x and person.point.y is point.y:
+            if person.point.x == point.x and person.point.y == point.y:
                return person
 
         return field_object(self.objects, point)
@@ -283,22 +283,26 @@ class FieldCreater:
                         if x % 2 == 0:
                             objects[x][y] = Object.wall
 
-
-                if objects[x][y] is Object.empty and random.randint(0, 1) ==  0\
-                   and (y + x) > 4\
+                # avoid corner block
+                if objects[x][y] is Object.empty and random.randint(0, 4) < 3\
+                   and (y + x) > 3\
                    and (x_size - x + y) > 4\
                    and (y_size - y + x) > 4\
-                   and (x_size + y_size - x - y) > 4:
+                   and (x_size + y_size - x - y) > 5:
                     objects[x][y] = Object.block
-                    items[x][y] = item_map[random.randint(0, 5)]
+                    items[x][y] = random.choice(item_map)
+
+        person_initial_positions = [
+            Point(1, 1),
+            Point(x_size - 2, y_size - 2),
+            Point(1, y_size - 2),
+            Point(x_size - 2, 1)
+        ]
 
         return {
             "objects":  objects,
             "items": items,
             "person_initial_positions": [
-                Point(1, 1),
-                Point(x_size - 2, y_size - 2),
-                Point(1, y_size - 2),
-                Point(x_size - 2, 1)
+                person_initial_positions[num] for num in range(person_num)
             ],
         }

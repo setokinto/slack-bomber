@@ -104,6 +104,7 @@ class FieldTest(unittest.TestCase):
         field.objects[1][2] = Object.empty
         field.objects[1][3] = Object.empty
         field.objects[1][4] = Object.empty
+        field.objects[1][5] = Object.empty
 
         self.assertEqual(person.fire_count, 1)
         self.assertEqual(person.bomb_count, 1)
@@ -185,7 +186,7 @@ class FieldTest(unittest.TestCase):
             [fire, fire, fire, fire, fire, fire, fire, None, None, None],
         ])
 
-        self.assertIsNone(field.objects[1][7])
+        self.assertEqual(field.objects[1][7], Object.empty)
 
     def test_field_should_get_field_object(self):
         field = Field(8, 10, ["user1", "user2"])
