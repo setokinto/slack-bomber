@@ -138,6 +138,29 @@ class FieldTest(unittest.TestCase):
         self.assertEqual(person.bomb_count, 2)
         self.assertEqual(person.speed_count, 2)
 
+    def test_Person_should_put_bomb_after_fired(self):
+        field = Field(8, 10, ["user1", "user2"])
+        bom1 = Bomb("user1", 1)
+        bom2 = Bomb("user1", 2)
+        person = field.persons[0]
+        person.bomb_count = 2
+
+        person.get_bomb()
+        person.get_bomb()
+        self.assertEqual(person._used_bomb, 2)
+        field.bombs = [
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, bom1, bom2, None, None, None, None, None, None],
+        ]
+        field.fire_bomb(Point(7, 2)) # bom1
+        self.assertEqual(person._used_bomb, 0)
+
     def test_Field_should_fire_with_other_bomb(self):
         field = Field(8, 10, ["user1", "user2"])
         bom1 = Bomb("user1", 1)
