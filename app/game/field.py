@@ -43,15 +43,57 @@ class Bomb(ProceedObject):
         self.fire_count = fire_count
         self.remain_time = 5
 
-    def fire(self):
+    def fire(self, field, point):
         fire_points = []
+
         for i in range(1, self.fire_count + 1):
+            fire_point = Point(-i, 0)
             fire_points += [
-                Point(-i, 0),
-                Point(i, 0),
-                Point(0, -i),
-                Point(0, i),
+                fire_point,
             ]
+            obj = field.get_field_object(point.diff(fire_point.x, fire_point.y))
+            if obj == Object.wall:
+                fire_points.pop()
+                break
+            if obj == Object.block:
+                break
+
+        for i in range(1, self.fire_count + 1):
+            fire_point = Point(i, 0)
+            fire_points += [
+                fire_point,
+            ]
+            obj = field.get_field_object(point.diff(fire_point.x, fire_point.y))
+            if obj == Object.wall:
+                fire_points.pop()
+                break
+            if obj == Object.block:
+                break
+
+        for i in range(1, self.fire_count + 1):
+            fire_point = Point(0, -i)
+            fire_points += [
+                fire_point,
+            ]
+            obj = field.get_field_object(point.diff(fire_point.x, fire_point.y))
+            if obj == Object.wall:
+                fire_points.pop()
+                break
+            if obj == Object.block:
+                break
+
+        for i in range(1, self.fire_count + 1):
+            fire_point = Point(0, i)
+            fire_points += [
+                fire_point,
+            ]
+            obj = field.get_field_object(point.diff(fire_point.x, fire_point.y))
+            if obj == Object.wall:
+                fire_points.pop()
+                break
+            if obj == Object.block:
+                break
+
         return fire_points + [Point(0, 0)]
 
     def proceed_time(self, proceeded_time):
@@ -153,24 +195,27 @@ class Field:
         # Remove bomb for infinite recursion
         put_object_to_field(self.bombs, point, None)
 
-        fire_points = bomb.fire()
+        fire_points = bomb.fire(self, point)
         for person in self.persons:
             if person.user == bomb.owner:
                 person.fired_bomb()
 
         for fire in fire_points:
             fire_pos = fire.diff(point.x, point.y)
-            object_at_fire = field_object(self.bombs, fire_pos)
-            if isinstance(object_at_fire, Bomb):
+            bomb_at_fire = field_object(self.bombs, fire_pos)
+            if isinstance(bomb_at_fire, Bomb):
                 self.fire_bomb(fire_pos)
             put_object_to_field(self.bombs, fire_pos, Fire())
             for person in self.persons:
                 if person.point == fire_pos:
                     person.dead = True
                     put_object_to_field(self.bombs, fire_pos, FiredPerson(person))
-            object = field_object(self.objects, fire_pos)
-            if object == Object.block:
+            object_at_fire = field_object(self.objects, fire_pos)
+            if object_at_fire == Object.block:
                 put_object_to_field(self.objects, fire_pos, Object.empty)
+            item_at_fire = field_object(self.items, fire_pos)
+            if isinstance(item_at_fire, Item):
+                put_object_to_field(self.items, fire_pos, None)
 
     def person_by_user(self, user):
         for person in self.persons:

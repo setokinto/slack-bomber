@@ -48,16 +48,58 @@ class FieldTest(unittest.TestCase):
             field.objects[7][10]
 
     def test_bomb_should_fire(self):
-        bomb = Bomb("user1", 2)
-        fire_points = bomb.fire()
-        self.assertEqual(len(fire_points), 2*4+1)
+        field = Field(8, 10, ["user1", "user2"])
+        bom1 = Bomb("user1", 3)
+        fire = Fire()
+        field.bombs = [
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, bom1, None, None, None, None, None, None, None],
+        ]
+        wall = Object.wall
+        block = Object.block
+        field.objects = [
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, wall, None, None, block, None, None, None, None, None],
+        ]
+        field.fire_bomb(Point(7, 2)) # bom1
 
-        self.assertTrue(Point(0, 0) in fire_points)
+        self.assertAllField(field.bombs, [
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, fire, None, None, None, None, None, None, None],
+            [None, None, fire, None, None, None, None, None, None, None],
+            [None, None, fire, None, None, None, None, None, None, None],
+            [None, None, fire, fire, fire, None, None, None, None, None],
+        ])
 
     def test_Field_should_proceed_time(self):
         field = Field(8, 10, ["user1", "user2"])
         field.persons[0].point = Point(7, 9)
         bom1 = Bomb("user1", 1)
+        field.objects = [
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+        ]
         field.bombs[0][0] = bom1
         field.proceed_time(3)
         self.assertEqual(field.bombs[0][0], bom1)
@@ -148,6 +190,16 @@ class FieldTest(unittest.TestCase):
         person.get_bomb()
         person.get_bomb()
         self.assertEqual(person._used_bomb, 2)
+        field.objects = [
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+        ]
         field.bombs = [
             [None, None, None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None, None, None],
@@ -170,6 +222,16 @@ class FieldTest(unittest.TestCase):
         bom5 = Bomb("user1", 5)
         fire = Fire()
         fired_person = FiredPerson(field.persons[0])
+        field.objects = [
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+        ]
         field.bombs = [
             [None, None, None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None, None, None],
