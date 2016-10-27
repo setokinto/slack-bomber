@@ -46,53 +46,18 @@ class Bomb(ProceedObject):
     def fire(self, field, point):
         fire_points = []
 
-        for i in range(1, self.fire_count + 1):
-            fire_point = Point(-i, 0)
-            fire_points += [
-                fire_point,
-            ]
-            obj = field.get_field_object(point.diff(fire_point.x, fire_point.y))
-            if obj == Object.wall:
-                fire_points.pop()
-                break
-            if obj == Object.block:
-                break
-
-        for i in range(1, self.fire_count + 1):
-            fire_point = Point(i, 0)
-            fire_points += [
-                fire_point,
-            ]
-            obj = field.get_field_object(point.diff(fire_point.x, fire_point.y))
-            if obj == Object.wall:
-                fire_points.pop()
-                break
-            if obj == Object.block:
-                break
-
-        for i in range(1, self.fire_count + 1):
-            fire_point = Point(0, -i)
-            fire_points += [
-                fire_point,
-            ]
-            obj = field.get_field_object(point.diff(fire_point.x, fire_point.y))
-            if obj == Object.wall:
-                fire_points.pop()
-                break
-            if obj == Object.block:
-                break
-
-        for i in range(1, self.fire_count + 1):
-            fire_point = Point(0, i)
-            fire_points += [
-                fire_point,
-            ]
-            obj = field.get_field_object(point.diff(fire_point.x, fire_point.y))
-            if obj == Object.wall:
-                fire_points.pop()
-                break
-            if obj == Object.block:
-                break
+        for x,y  in [[0, -1], [0, 1], [1, 0], [-1, 0]]:
+            for i in range(1, self.fire_count+1):
+                fire_point = Point(x * i, y * i)
+                fire_points += [
+                    fire_point,
+                ]
+                obj = field.get_field_object(point.diff(fire_point.x, fire_point.y))
+                if obj == Object.wall:
+                    fire_points.pop()
+                    break
+                if obj == Object.block:
+                    break
 
         return fire_points + [Point(0, 0)]
 
@@ -211,10 +176,10 @@ class Field:
                     person.dead = True
                     put_object_to_field(self.bombs, fire_pos, FiredPerson(person))
             object_at_fire = field_object(self.objects, fire_pos)
+            item_at_fire = field_object(self.items, fire_pos)
             if object_at_fire == Object.block:
                 put_object_to_field(self.objects, fire_pos, Object.empty)
-            item_at_fire = field_object(self.items, fire_pos)
-            if isinstance(item_at_fire, Item):
+            elif isinstance(item_at_fire, Item):
                 put_object_to_field(self.items, fire_pos, None)
 
     def person_by_user(self, user):
