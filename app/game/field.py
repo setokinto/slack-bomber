@@ -46,8 +46,8 @@ class Bomb(ProceedObject):
     def fire(self, field, point):
         fire_points = []
 
-        for x,y  in [[0, -1], [0, 1], [1, 0], [-1, 0]]:
-            for i in range(1, self.fire_count+1):
+        for x, y in [[0, -1], [0, 1], [1, 0], [-1, 0]]:
+            for i in range(1, self.fire_count + 1):
                 fire_point = Point(x * i, y * i)
                 fire_points += [
                     fire_point,
