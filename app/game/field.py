@@ -207,6 +207,9 @@ class Field:
         self.move(person, 0, 1)
 
     def move(self, person, x, y):
+        if person.dead:
+            return
+            
         dest = person.point.diff(x, y)
         if self.check_obstacle(dest):
             person.point = dest

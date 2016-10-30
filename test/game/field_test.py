@@ -38,6 +38,27 @@ class FieldTest(unittest.TestCase):
         field.put_bomb(person1)
         self.assertIsNotNone(field.bombs[1][1], "It should put a bomb")
 
+    def test_dead_person_should_not_move_in_Field(self):
+        field = Field(8, 10, ["user1", "user2"])
+        field.objects = [
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None, None, None],
+        ]
+        person1 = field.person_by_user("user1")
+        self.assertIsNotNone(person1)
+        person1.point = Point(1, 1)
+        field.move_bottom(person1)
+        self.assertEqual(person1.point, Point(1, 2))
+        person1.dead = True
+        field.move_bottom(person1)
+        self.assertEqual(person1.point, Point(1, 2))
+
     def test_put_two_bomb_at_one_pos(self):
         field = Field(8, 11, ["user1", "user2"])
         person1 = field.person_by_user("user1")
