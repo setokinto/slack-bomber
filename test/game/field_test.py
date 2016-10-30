@@ -38,6 +38,17 @@ class FieldTest(unittest.TestCase):
         field.put_bomb(person1)
         self.assertIsNotNone(field.bombs[1][1], "It should put a bomb")
 
+    def test_put_two_bomb_at_one_pos(self):
+        field = Field(8, 11, ["user1", "user2"])
+        person1 = field.person_by_user("user1")
+        person1.point = Point(1, 1)
+        field.objects[1][1] = Object.empty
+        person1.bomb_count = 2
+        field.put_bomb(person1)
+        self.assertEqual(person1._used_bomb, 1)
+        field.put_bomb(person1)
+        self.assertEqual(person1._used_bomb, 1)
+
     def test_Field_should_create(self):
         field = Field(8, 10, ["user1", "user2"])
         field.objects[0][0]
