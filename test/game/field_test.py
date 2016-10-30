@@ -55,9 +55,19 @@ class FieldTest(unittest.TestCase):
         person1.point = Point(1, 1)
         field.move_bottom(person1)
         self.assertEqual(person1.point, Point(1, 2))
-        person1.dead = True
+
+        person1.life_num = 2
+
+        bom2 = Bomb("user1", 1)
+        field.bombs[1][1] = bom2
+        field.fire_bomb(Point(1, 1))
         field.move_bottom(person1)
-        self.assertEqual(person1.point, Point(1, 2))
+        self.assertEqual(person1.point, Point(1, 3))
+
+        field.bombs[1][2] = bom2
+        field.fire_bomb(Point(1, 2))
+        field.move_bottom(person1)
+        self.assertEqual(person1.point, Point(1, 3))
 
     def test_put_two_bomb_at_one_pos(self):
         field = Field(8, 11, ["user1", "user2"])
@@ -289,9 +299,11 @@ class FieldTest(unittest.TestCase):
         ])
 
         field.persons[0].point = Point(3, 9)
+        field.persons[0].life_num = 1
         field.objects[1][7] = Object.block
 
         field.fire_bomb(Point(3, 1)) # bom3
+
         self.assertAllField(field.bombs, [
             [None, fire, None, None, fire, None, None, None, None, None],
             [None, fire, None, None, fire, None, None, fire, None, None],

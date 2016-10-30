@@ -99,6 +99,7 @@ class Person:
         self.speed_count = 1
         self.fire_count = 1
         self._used_bomb = 0
+        self.life_num = 5
         self.dead = False
 
     def fired_bomb(self):
@@ -173,8 +174,10 @@ class Field:
             put_object_to_field(self.bombs, fire_pos, Fire())
             for person in self.persons:
                 if person.point == fire_pos:
-                    person.dead = True
-                    put_object_to_field(self.bombs, fire_pos, FiredPerson(person))
+                    person.life_num -= 1
+                    if person.life_num <= 0:
+                        person.dead = True
+                        put_object_to_field(self.bombs, fire_pos, FiredPerson(person))
             object_at_fire = field_object(self.objects, fire_pos)
             item_at_fire = field_object(self.items, fire_pos)
             if object_at_fire == Object.block:
@@ -209,7 +212,7 @@ class Field:
     def move(self, person, x, y):
         if person.dead:
             return
-            
+
         dest = person.point.diff(x, y)
         if self.check_obstacle(dest):
             person.point = dest
