@@ -1,7 +1,7 @@
 
 import re
 
-from slackbot.bot import respond_to
+from slackbot.bot import respond_to, listen_to
 
 from app.game.bomber import BomberFactory
 
@@ -22,3 +22,10 @@ def start(message, who):
 def end(message):
     BomberFactory.remove(message.body["channel"])
     message.reply("finished")
+
+@listen_to(".*")
+def any(message):
+    bomber = BomberFactory.instance(message.body["channel"])
+    if bomber is not None:
+        bomber.add_chat_count()
+

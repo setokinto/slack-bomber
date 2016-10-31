@@ -1,5 +1,6 @@
 
 import unittest
+import time
 from unittest.mock import patch
 
 from app.game.bomber import BomberFactory, Bomber
@@ -29,4 +30,25 @@ class BomberTest(unittest.TestCase):
         bomber1 = BomberFactory.create("channel1", [])
         bomber2 = BomberFactory.create("channel2", [])
         self.assertIsNot(bomber1, bomber2)
+
+    @patch("app.game.bomber.FieldOutputter")
+    def test_send_new_message_after_8_chats(self, mocked_outputter):
+        bomber = BomberFactory.create("channel2", [])
+        bomber.prev_tick = time.time()
+        self.assertEqual(bomber.should_send_as_new_message, False)
+        bomber.add_chat_count()
+        bomber.add_chat_count()
+        bomber.add_chat_count()
+        bomber.add_chat_count()
+        bomber.add_chat_count()
+        bomber.add_chat_count()
+        bomber.add_chat_count()
+        self.assertEqual(bomber.should_send_as_new_message, False)
+        bomber.tick()
+        bomber.add_chat_count()
+        self.assertEqual(bomber.should_send_as_new_message, True)
+        bomber.tick()
+        self.assertEqual(bomber.should_send_as_new_message, False)
+        bomber.add_chat_count()
+        self.assertEqual(bomber.should_send_as_new_message, False)
 

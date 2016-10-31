@@ -56,6 +56,9 @@ class FieldOutputter:
             field_text += "\n"
 
         if new_message or channel not in cls.recent_field_ts:
+            if new_message:
+                ts = cls.recent_field_ts[channel]
+                slacker.chat.update(channel, ts, "The field is expired.\nPlease scroll to bottom for next field")
             res = slacker.chat.post_message(channel, field_text)
             cls.recent_field_ts[channel] = res.body["ts"]
             cls.add_controller(channel, res.body["ts"])
