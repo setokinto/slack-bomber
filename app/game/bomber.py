@@ -40,6 +40,7 @@ class Bomber:
         self.field = Field(11, 15, users)
         self.fetcher = Input(channel, self.reaction_handler)
         self.prev_tick = None
+        self.chat_count = 0
 
     def start(self):
         self.running = True
@@ -53,7 +54,11 @@ class Bomber:
         tick_time = time.time()
         sec = tick_time - self.prev_tick
         self.field.proceed_time(sec)
-        FieldOutputter.post_field(self.channel, self.field)
+        if self.should_send_as_new_message:
+            FieldOutputter.post_field(self.channel, self.field, new_message=True)
+            self.chat_count = 0
+        else:
+            FieldOutputter.post_field(self.channel, self.field)
         self.prev_tick = tick_time
 
     def reaction_handler(self, user, command):
@@ -71,3 +76,11 @@ class Bomber:
             self.field.move_left(person)
         elif command == Command.a:
             self.field.put_bomb(person)
+
+    def add_chat_count(self):
+        self.chat_count += 1
+
+    @property
+    def should_send_as_new_message(self):
+        return self.chat_count >= 8
+
