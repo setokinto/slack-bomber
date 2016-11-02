@@ -47,6 +47,12 @@ class FieldOutputter:
     def post_field(cls, channel, field, new_message=False):
 
         field_text = ""
+        
+        # TODO remove this 3 line after implement output person infomation
+        for person in field.persons:
+            field_text += object_to_emoji(person) + "×" + str(person.life_num) + " "
+        field_text += "\n"
+
         point = Point(0, 0)
         for y in range(field.y_size):
             for x in range(field.x_size):
