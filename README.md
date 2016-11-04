@@ -6,6 +6,9 @@
 # slack-bomber
 It's a bomb. Just a bomb.
 
+# Try it with Docker
+`docker run --env API_TOKEN="<Your Slack Bot Token>" setokinto/slack-bomber`
+
 # How to use
 1. Create a Bot https://your-team-name.slack.com/apps/A0F7YS25R-bots
 2. Copy config file cp bomber.env.default bomber.env
